@@ -4,29 +4,38 @@ const { radarr } = require("./config");
 const { delay } = require("./util");
 
 async function getMovieReleases(radarrApi, movie) {
-  const { movieFile } = movie;
+  const movieName = `${movie.title} (${movie.year})`;
+  let releases = [];
 
-  console.log(`Searching for ${movie.title} (${movie.year})...`);
+  try {
+    const { movieFile } = movie;
 
-  const { data: searchResults } = await radarrApi.get(
-    `/release?movieId=${movie.id}`
-  );
+    console.log(`Searching for ${movieName}...`);
 
-  const filteredResults = searchResults
-    .filter((result) => result.protocol === "torrent")
-    .filter(
-      (result) => result.quality.quality.id === movieFile.quality.quality.id
-    )
-    .filter((result) => {
-      const sizeDifference = Math.abs(movieFile.size - result.size);
-      const sizeDifferencePercentage = sizeDifference / movieFile.size;
+    const { data: searchResults } = await radarrApi.get(
+      `/release?movieId=${movie.id}`
+    );
 
-      return sizeDifferencePercentage < radarr.threshold / 100;
-    });
+    releases = searchResults
+      .filter((result) => result.protocol === "torrent")
+      .filter((result) => {
+        const sizeDifference = Math.abs(movieFile.size - result.size);
+        const sizeDifferencePercentage = sizeDifference / movieFile.size;
 
-  console.log(
-    `Found ${searchResults.length} result(s) - Eligible: ${filteredResults.length}`
-  );
+        return sizeDifferencePercentage < radarr.threshold / 100;
+      });
+
+    console.log(
+      `Found ${searchResults.length} result(s) - Eligible: ${releases.length}`
+    );
+  } catch (e) {
+    console.log(
+      `An error ocurred while searching for ${movieName}, skipping...`,
+      e
+    );
+  }
+
+  return releases;
 }
 
 module.exports = async function radarrFlow() {
@@ -40,6 +49,7 @@ module.exports = async function radarrFlow() {
     headers: {
       "X-Api-Key": radarr.apiKey,
     },
+    timeout: 60000,
   });
 
   try {
@@ -52,14 +62,15 @@ module.exports = async function radarrFlow() {
     );
 
     console.log(
-      `Fetching movies complete! Eligible movies found: ${movies.length}`
+      `Fetching movies complete - Eligible movies found: ${movies.length}`
     );
 
-    for (movie of movies.slice(0, 10)) {
-      await getMovieReleases(radarrApi, movie);
+    for (movie of movies) {
+      const releases = await getMovieReleases(radarrApi, movie);
+      console.log(releases[0]);
       await delay();
     }
   } catch (e) {
-    console.log(e);
+    console.log(`An error occurred in the radarr flow`, e);
   }
 };
