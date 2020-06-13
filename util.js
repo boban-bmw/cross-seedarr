@@ -1,19 +1,21 @@
 const fs = require("fs");
-const pino = require("pino");
+const logger = require("pino")({
+  prettyPrint: true,
+});
 
 const { timeout } = require("./config");
 
 module.exports = {
   delay() {
     return new Promise((resolve) => {
+      logger.info(`Waiting ${timeout} seconds...`);
+
       setTimeout(() => {
         resolve();
       }, timeout * 1000);
     });
   },
-  logger: pino({
-    prettyPrint: true,
-  }),
+  logger,
   mkdir(dir) {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir);

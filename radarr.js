@@ -24,7 +24,10 @@ async function getMovieReleases(radarrApi, movie) {
         const sizeDifferencePercentage = sizeDifference / movieFile.size;
 
         return sizeDifferencePercentage < radarr.threshold / 100;
-      });
+      })
+      .filter(
+        (release) => radarr.ignoredIndexers.indexOf(release.indexer) === -1
+      );
 
     logger.info(
       `Found ${searchResults.length} result(s) - Eligible: ${releases.length}`
@@ -40,8 +43,8 @@ async function getMovieReleases(radarrApi, movie) {
 }
 
 module.exports = async function radarrFlow() {
-  if (!radarr.url || !radarr.apiKey) {
-    logger.warn("radarr url or api key missing, skipping...");
+  if (!radarr || !radarr.url || !radarr.apiKey) {
+    logger.warn("radarr config unset, skipping...");
     return;
   }
 
@@ -85,6 +88,6 @@ module.exports = async function radarrFlow() {
       await delay();
     }
   } catch (e) {
-    logger.error(e, `An error occurred in the radarr flow`);
+    logger.error(e, `An error occurred while processing movies`);
   }
 };

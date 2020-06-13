@@ -3,15 +3,19 @@ module.exports = {
   timeout: 5,
   radarr: {
     // url you use to access radarr
+    // https://your.seedbox.url/radarr
     // in case you are using http auth, the url should look like this
     // https://username:password@your.seedbox.url/radarr
-    url: "https://your.seedbox.url/radarr",
+    url: "",
     // radarr api key, found in settings -> general
-    apiKey: "yourApiKey",
+    apiKey: "",
     // error threshold in % - torrent size difference which is ignored (treated as same release)
     // this is useful for eg. samples which some trackers include and others don't
     threshold: 5,
-    // directory where we save matches
+    // absolute path to the directory where we save matches
     torrentDir: "/tmp/torrents",
+    // we search all "search-enabled" indexers - results from indexers listed below will be ignored
+    // eg. ignoredIndexers: ["IPT", "TL"]
+    ignoredIndexers: [],
   },
 };

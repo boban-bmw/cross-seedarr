@@ -14,7 +14,7 @@ module.exports = async function downloadRelease(basePath, release) {
       const savePath = path.resolve(basePath, fileName);
 
       if (fs.existsSync(savePath)) {
-        logger.info(`${savePath} already exists, skipping...`);
+        logger.info(`${fileName} already exists, skipping...`);
 
         resolve();
 
