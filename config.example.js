@@ -11,5 +11,7 @@ module.exports = {
     // error threshold in % - torrent size difference which is ignored (treated as same release)
     // this is useful for eg. samples which some trackers include and others don't
     threshold: 5,
+    // directory where we save matches
+    torrentDir: "/tmp/torrents",
   },
 };

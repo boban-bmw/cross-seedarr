@@ -1,7 +1,8 @@
 const axios = require("axios");
 
 const { radarr } = require("./config");
-const { delay, logger } = require("./util");
+const { delay, logger, mkdir } = require("./util");
+const downloadRelease = require("./download");
 
 async function getMovieReleases(radarrApi, movie) {
   const movieName = `${movie.title} (${movie.year})`;
@@ -44,6 +45,8 @@ module.exports = async function radarrFlow() {
     return;
   }
 
+  mkdir(radarr.torrentDir);
+
   const radarrApi = axios.create({
     baseURL: `${radarr.url}/api`,
     headers: {
@@ -67,7 +70,18 @@ module.exports = async function radarrFlow() {
 
     for (movie of movies) {
       const releases = await getMovieReleases(radarrApi, movie);
-      logger.info(releases[0]);
+
+      for (release of releases) {
+        try {
+          await downloadRelease(radarr.torrentDir, release);
+        } catch (e) {
+          logger.error(
+            e,
+            `An error ocurred while saving ${release.title} from ${release.indexer}`
+          );
+        }
+      }
+
       await delay();
     }
   } catch (e) {

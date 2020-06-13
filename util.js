@@ -1,3 +1,4 @@
+const fs = require("fs");
 const pino = require("pino");
 
 const { timeout } = require("./config");
@@ -10,10 +11,12 @@ module.exports = {
       }, timeout * 1000);
     });
   },
-  logger: pino(
-    pino.destination({
-      dest: "./cross-seedarr.log",
-      sync: false,
-    })
-  ),
+  logger: pino({
+    prettyPrint: true,
+  }),
+  mkdir(dir) {
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir);
+    }
+  },
 };
