@@ -4,7 +4,7 @@
   "description": "Cross seeding helper for radarr & sonarr.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
@@ -33,5 +33,8 @@
   },
   "lint-staged": {
     "*.{js,css,md}": "prettier --write"
+  },
+  "dependencies": {
+    "axios": "^0.19.2"
   }
 }
