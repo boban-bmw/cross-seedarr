@@ -35,6 +35,7 @@
     "*.{js,css,md}": "prettier --write"
   },
   "dependencies": {
-    "axios": "^0.19.2"
+    "axios": "^0.19.2",
+    "pino": "^6.3.2"
   }
 }

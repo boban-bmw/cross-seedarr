@@ -1,7 +1,7 @@
 const axios = require("axios");
 
 const { radarr } = require("./config");
-const { delay } = require("./util");
+const { delay, logger } = require("./util");
 
 async function getMovieReleases(radarrApi, movie) {
   const movieName = `${movie.title} (${movie.year})`;
@@ -10,7 +10,7 @@ async function getMovieReleases(radarrApi, movie) {
   try {
     const { movieFile } = movie;
 
-    console.log(`Searching for ${movieName}...`);
+    logger.info(`Searching for ${movieName}...`);
 
     const { data: searchResults } = await radarrApi.get(
       `/release?movieId=${movie.id}`
@@ -25,13 +25,13 @@ async function getMovieReleases(radarrApi, movie) {
         return sizeDifferencePercentage < radarr.threshold / 100;
       });
 
-    console.log(
+    logger.info(
       `Found ${searchResults.length} result(s) - Eligible: ${releases.length}`
     );
   } catch (e) {
-    console.log(
-      `An error ocurred while searching for ${movieName}, skipping...`,
-      e
+    logger.error(
+      e,
+      `An error ocurred while searching for ${movieName}, skipping...`
     );
   }
 
@@ -40,7 +40,7 @@ async function getMovieReleases(radarrApi, movie) {
 
 module.exports = async function radarrFlow() {
   if (!radarr.url || !radarr.apiKey) {
-    console.log("radarr url or api key missing, skipping...");
+    logger.warn("radarr url or api key missing, skipping...");
     return;
   }
 
@@ -53,7 +53,7 @@ module.exports = async function radarrFlow() {
   });
 
   try {
-    console.log("Fetching movies...");
+    logger.info("Fetching movies...");
 
     const { data: allMovies } = await radarrApi.get("/movie");
 
@@ -61,16 +61,16 @@ module.exports = async function radarrFlow() {
       (movie) => movie.monitored && movie.downloaded && movie.hasFile
     );
 
-    console.log(
+    logger.info(
       `Fetching movies complete - Eligible movies found: ${movies.length}`
     );
 
     for (movie of movies) {
       const releases = await getMovieReleases(radarrApi, movie);
-      console.log(releases[0]);
+      logger.info(releases[0]);
       await delay();
     }
   } catch (e) {
-    console.log(`An error occurred in the radarr flow`, e);
+    logger.error(e, `An error occurred in the radarr flow`);
   }
 };

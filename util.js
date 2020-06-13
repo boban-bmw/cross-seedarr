@@ -1,3 +1,5 @@
+const pino = require("pino");
+
 const { timeout } = require("./config");
 
 module.exports = {
@@ -8,4 +10,10 @@ module.exports = {
       }, timeout * 1000);
     });
   },
+  logger: pino(
+    pino.destination({
+      dest: "./cross-seedarr.log",
+      sync: false,
+    })
+  ),
 };
