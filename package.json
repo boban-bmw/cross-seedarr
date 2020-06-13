@@ -1,0 +1,37 @@
+{
+  "name": "cross-seedarr",
+  "version": "1.0.0",
+  "description": "Cross seeding helper for radarr & sonarr.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/boban-bmw/cross-seedarr.git"
+  },
+  "keywords": [
+    "radarr",
+    "sonarr",
+    "cross-seeding"
+  ],
+  "author": "Boban BMW",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/boban-bmw/cross-seedarr/issues"
+  },
+  "homepage": "https://github.com/boban-bmw/cross-seedarr#readme",
+  "devDependencies": {
+    "husky": "^4.2.5",
+    "lint-staged": "^10.2.10",
+    "prettier": "^2.0.5"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,css,md}": "prettier --write"
+  }
+}
