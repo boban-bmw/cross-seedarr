@@ -21,27 +21,29 @@ module.exports = async function downloadRelease(basePath, release) {
         return;
       }
 
-      const writer = fs.createWriteStream(savePath);
+      const writeStream = fs.createWriteStream(savePath);
 
       const response = await axios.get(downloadUrl, {
         responseType: "stream",
       });
 
-      response.data.pipe(writer);
+      response.data.pipe(writeStream);
 
-      writer.on("finish", () => {
+      writeStream.on("finish", () => {
         logger.info(
           `Successfully downloaded ${release.title} from ${release.indexer}`
         );
 
         resolve();
       });
-      writer.on("error", reject);
+      writeStream.on("error", reject);
     } catch (e) {
       logger.error(
         e,
         `An error ocurred while downloading ${release.title} from ${release.indexer}`
       );
+
+      resolve();
     }
   });
 };
