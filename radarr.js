@@ -1,7 +1,7 @@
 const axios = require("axios");
 
 const { radarr } = require("./config");
-const { delay, logger, mkdir } = require("./util");
+const { delay, logger, mkdir, deleteEmptyFiles } = require("./util");
 const downloadRelease = require("./download");
 
 async function getMovieReleases(radarrApi, movie) {
@@ -97,6 +97,8 @@ module.exports = async function radarrFlow() {
 
       await delay();
     }
+
+    deleteEmptyFiles(radarr.torrentDir);
   } catch (e) {
     logger.error(e, `An error occurred while processing movies`);
   }
