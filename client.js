@@ -6,6 +6,6 @@ module.exports = function makeClient(settings) {
     headers: {
       "X-Api-Key": settings.apiKey,
     },
-    timeout: 60000,
+    timeout: 120000,
   });
 };
