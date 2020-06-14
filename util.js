@@ -25,7 +25,7 @@ module.exports = {
   deleteEmptyFiles(dir) {
     const fileNames = fs.readdirSync(dir);
 
-    for (fileName of fileNames) {
+    for (const fileName of fileNames) {
       const filePath = path.join(dir, fileName);
       const file = fs.statSync(filePath);
 

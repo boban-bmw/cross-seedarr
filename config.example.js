@@ -1,6 +1,7 @@
 module.exports = {
   // amount of time to wait between requests in seconds
   timeout: 5,
+  // if you aren't using radarr, leave the url and apiKey empty
   radarr: {
     // url you use to access radarr
     // https://your.seedbox.url/radarr
@@ -16,6 +17,14 @@ module.exports = {
     torrentDir: "/tmp/torrents",
     // we search all "search-enabled" indexers - results from indexers listed below will be ignored
     // eg. ignoredIndexers: ["IPT", "TL"]
+    ignoredIndexers: [],
+  },
+  sonarr: {
+    // same as for radarr
+    url: "",
+    apiKey: "",
+    threshold: 5,
+    torrentDir: "/tmp/torrents",
     ignoredIndexers: [],
   },
 };

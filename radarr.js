@@ -50,13 +50,7 @@ module.exports = async function radarrFlow() {
 
   mkdir(radarr.torrentDir);
 
-  const radarrApi = axios.create({
-    baseURL: `${radarr.url}/api`,
-    headers: {
-      "X-Api-Key": radarr.apiKey,
-    },
-    timeout: 60000,
-  });
+  const radarrApi = makeClient(radarr);
 
   try {
     logger.info("Fetching movies...");
@@ -73,10 +67,10 @@ module.exports = async function radarrFlow() {
 
     let counter = 0;
 
-    for (movie of movies) {
+    for (const movie of movies) {
       const releases = await getMovieReleases(radarrApi, movie);
 
-      for (release of releases) {
+      for (const release of releases) {
         try {
           await downloadRelease(radarr.torrentDir, release);
         } catch (e) {
@@ -100,6 +94,6 @@ module.exports = async function radarrFlow() {
 
     deleteEmptyFiles(radarr.torrentDir);
   } catch (e) {
-    logger.error(e, `An error occurred while processing movies`);
+    logger.error(e, "An error occurred while processing movies");
   }
 };
