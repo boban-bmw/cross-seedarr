@@ -20,6 +20,8 @@ npm start
 
 `torrentDir` will now contain all potential matching torrents - pass these to [autotorrent](https://github.com/JohnDoee/autotorrent).
 
+`cross-seedarr` will not download duplicate `.torrent` files - so it recommended to use `autotorrent` without the `-d` flag
+
 ### Tested versions
 
 - `radarr v2` - `v3` might work as well
