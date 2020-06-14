@@ -40,7 +40,7 @@ module.exports = async function downloadRelease(basePath, release) {
     } catch (e) {
       logger.error(
         e,
-        `An error ocurred while downloading ${release.title} from ${release.indexer}`
+        `An error occurred while downloading ${release.title} from ${release.indexer}`
       );
 
       resolve();

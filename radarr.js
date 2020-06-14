@@ -2,6 +2,7 @@ const axios = require("axios");
 
 const { radarr } = require("./config");
 const { delay, logger, mkdir, deleteEmptyFiles } = require("./util");
+const makeClient = require("./client");
 const downloadRelease = require("./download");
 
 async function getMovieReleases(radarrApi, movie) {
@@ -35,7 +36,7 @@ async function getMovieReleases(radarrApi, movie) {
   } catch (e) {
     logger.error(
       e,
-      `An error ocurred while searching for ${movieName}, skipping...`
+      `An error occurred while searching for ${movieName}, skipping...`
     );
   }
 
@@ -76,7 +77,7 @@ module.exports = async function radarrFlow() {
         } catch (e) {
           logger.error(
             e,
-            `An error ocurred while saving ${release.title} from ${release.indexer}`
+            `An error occurred while saving ${release.title} from ${release.indexer}`
           );
         }
       }
