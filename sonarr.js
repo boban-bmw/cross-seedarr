@@ -9,10 +9,6 @@ const {
 const makeClient = require("./client");
 const downloadRelease = require("./download");
 
-function findCompleteRelease(results, size) {
-  return results.filter(eligibleRelease(size, sonarr.threshold));
-}
-
 async function getSeasonReleases(sonarrApi, show, season) {
   const seasonName = `${show.title} (${show.year}) S${
     season.seasonNumber < 10 ? 0 : ""
@@ -41,7 +37,11 @@ async function getSeasonReleases(sonarrApi, show, season) {
         0
       );
 
-      releases.push(...findCompleteRelease(searchResults, completeShowSize));
+      releases.push(
+        ...searchResults.filter(
+          eligibleRelease(completeShowSize, sonarr.threshold)
+        )
+      );
     }
 
     logger.info(
