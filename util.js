@@ -36,4 +36,12 @@ module.exports = {
       }
     }
   },
+  eligibleRelease(size, threshold) {
+    return function (result) {
+      const sizeDifference = Math.abs(size - result.size);
+      const sizeDifferencePercentage = sizeDifference / size;
+
+      return sizeDifferencePercentage < threshold / 100;
+    };
+  },
 };

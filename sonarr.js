@@ -1,9 +1,19 @@
 const axios = require("axios");
 
 const { sonarr } = require("./config");
-const { logger, mkdir, delay } = require("./util");
+const {
+  delay,
+  logger,
+  mkdir,
+  deleteEmptyFiles,
+  eligibleRelease,
+} = require("./util");
 const makeClient = require("./client");
 const downloadRelease = require("./download");
+
+function findCompleteRelease(results, size) {
+  return results.filter(eligibleRelease(size, sonarr.threshold));
+}
 
 async function getSeasonReleases(sonarrApi, show, season) {
   const seasonName = `${show.title} (${show.year}) S${
@@ -15,24 +25,26 @@ async function getSeasonReleases(sonarrApi, show, season) {
   try {
     logger.info(`Searching for ${seasonName}...`);
 
-    const { data: searchResults } = await sonarrApi.get(
-      `/v3/release?seriesId=${show.id}&seasonNumber=${season.seasonNumber}`
-    );
+    const searchResults = (
+      await sonarrApi.get(
+        `/v3/release?seriesId=${show.id}&seasonNumber=${season.seasonNumber}`
+      )
+    ).data.filter((result) => result.protocol === "torrent");
 
     releases = searchResults
-      .filter((result) => result.protocol === "torrent")
-      .filter((result) => {
-        const sizeDifference = Math.abs(
-          season.statistics.sizeOnDisk - result.size
-        );
-        const sizeDifferencePercentage =
-          sizeDifference / season.statistics.sizeOnDisk;
-
-        return sizeDifferencePercentage < sonarr.threshold / 100;
-      })
+      .filter(eligibleRelease(season.statistics.sizeOnDisk, sonarr.threshold))
       .filter(
         (release) => sonarr.ignoredIndexers.indexOf(release.indexer) === -1
       );
+
+    if (show.seasons.length > 1 && season.seasonNumber === 1) {
+      const completeShowSize = show.seasons.reduce(
+        (prev, next) => prev + next.statistics.sizeOnDisk,
+        0
+      );
+
+      releases.push(...findCompleteRelease(searchResults, completeShowSize));
+    }
 
     logger.info(
       `Found ${searchResults.length} results(s) - Eligible: ${releases.length}`
@@ -98,6 +110,8 @@ module.exports = async function sonarrFlow() {
         )}% (${counter}/${series.length})`
       );
     }
+
+    deleteEmptyFiles(sonarr.torrentDir);
   } catch (e) {
     logger.error(e, "An error occurred while processing series");
   }

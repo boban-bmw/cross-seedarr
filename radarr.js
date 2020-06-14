@@ -1,7 +1,13 @@
 const axios = require("axios");
 
 const { radarr } = require("./config");
-const { delay, logger, mkdir, deleteEmptyFiles } = require("./util");
+const {
+  delay,
+  logger,
+  mkdir,
+  deleteEmptyFiles,
+  eligibleRelease,
+} = require("./util");
 const makeClient = require("./client");
 const downloadRelease = require("./download");
 
@@ -14,18 +20,12 @@ async function getMovieReleases(radarrApi, movie) {
 
     logger.info(`Searching for ${movieName}...`);
 
-    const { data: searchResults } = await radarrApi.get(
-      `/release?movieId=${movie.id}`
-    );
+    const searchResults = (
+      await radarrApi.get(`/release?movieId=${movie.id}`)
+    ).data.filter((result) => result.protocol === "torrent");
 
     releases = searchResults
-      .filter((result) => result.protocol === "torrent")
-      .filter((result) => {
-        const sizeDifference = Math.abs(movieFile.size - result.size);
-        const sizeDifferencePercentage = sizeDifference / movieFile.size;
-
-        return sizeDifferencePercentage < radarr.threshold / 100;
-      })
+      .filter(eligibleRelease(movieFile.size, radarr.threshold))
       .filter(
         (release) => radarr.ignoredIndexers.indexOf(release.indexer) === -1
       );
