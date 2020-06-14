@@ -1,5 +1,3 @@
-const axios = require("axios");
-
 const { sonarr } = require("./config");
 const {
   delay,

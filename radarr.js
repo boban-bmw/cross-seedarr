@@ -1,5 +1,3 @@
-const axios = require("axios");
-
 const { radarr } = require("./config");
 const {
   delay,
