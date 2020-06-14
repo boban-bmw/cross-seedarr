@@ -71,6 +71,8 @@ module.exports = async function radarrFlow() {
       `Fetching movies complete - Eligible movies found: ${movies.length}`
     );
 
+    let counter = 0;
+
     for (movie of movies) {
       const releases = await getMovieReleases(radarrApi, movie);
 
@@ -84,6 +86,14 @@ module.exports = async function radarrFlow() {
           );
         }
       }
+
+      counter += 1;
+
+      logger.info(
+        `Progress: ${((counter / movies.length) * 100).toFixed(
+          2
+        )}% (${counter}/${movies.length})`
+      );
 
       await delay();
     }
