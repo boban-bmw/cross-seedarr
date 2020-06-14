@@ -37,11 +37,14 @@ module.exports = {
     }
   },
   eligibleRelease(size, threshold) {
-    return function (result) {
-      const sizeDifference = Math.abs(size - result.size);
+    return (release) => {
+      const sizeDifference = Math.abs(size - release.size);
       const sizeDifferencePercentage = sizeDifference / size;
 
       return sizeDifferencePercentage < threshold / 100;
     };
+  },
+  validIndexers(ignoredIndexers) {
+    return (release) => ignoredIndexers.indexOf(release.indexer) === -1;
   },
 };

@@ -5,6 +5,7 @@ const {
   mkdir,
   deleteEmptyFiles,
   eligibleRelease,
+  validIndexers,
 } = require("./util");
 const makeClient = require("./client");
 const downloadRelease = require("./download");
@@ -27,9 +28,7 @@ async function getSeasonReleases(sonarrApi, show, season) {
 
     releases = searchResults
       .filter(eligibleRelease(season.statistics.sizeOnDisk, sonarr.threshold))
-      .filter(
-        (release) => sonarr.ignoredIndexers.indexOf(release.indexer) === -1
-      );
+      .filter(validIndexers(sonarr.ignoredIndexers));
 
     if (show.seasons.length > 1 && season.seasonNumber === 1) {
       const completeShowSize = show.seasons.reduce(
@@ -37,11 +36,11 @@ async function getSeasonReleases(sonarrApi, show, season) {
         0
       );
 
-      releases.push(
-        ...searchResults.filter(
-          eligibleRelease(completeShowSize, sonarr.threshold)
-        )
-      );
+      const completePacks = searchResults
+        .filter(eligibleRelease(completeShowSize, sonarr.threshold))
+        .filter(validIndexers(sonarr.ignoredIndexers));
+
+      releases.push(...completePacks);
     }
 
     logger.info(

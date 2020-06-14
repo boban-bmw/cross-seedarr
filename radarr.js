@@ -5,6 +5,7 @@ const {
   mkdir,
   deleteEmptyFiles,
   eligibleRelease,
+  validIndexers,
 } = require("./util");
 const makeClient = require("./client");
 const downloadRelease = require("./download");
@@ -24,9 +25,7 @@ async function getMovieReleases(radarrApi, movie) {
 
     releases = searchResults
       .filter(eligibleRelease(movieFile.size, radarr.threshold))
-      .filter(
-        (release) => radarr.ignoredIndexers.indexOf(release.indexer) === -1
-      );
+      .filter(validIndexers(radarr.ignoredIndexers));
 
     logger.info(
       `Found ${searchResults.length} result(s) - Eligible: ${releases.length}`
