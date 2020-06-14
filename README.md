@@ -18,7 +18,7 @@ npm start
 
 ### Versions
 
-Tested with `node` v14, `radarr` v2 on `ubuntu` v20 - but it should work on other operating systems without issue.
+Tested with `node v14`, `radarr v2` on `ubuntu v20` - but it should work on other operating systems without issue.
 
 ## License
 
