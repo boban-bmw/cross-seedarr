@@ -8,6 +8,8 @@ const { argv } = require("yargs")
     "recent",
     "Consider movies/shows added in the last x days. If omitted, everything is searched for."
   )
+  .boolean("verbose")
+  .describe("verbose", "Turn off log pretty printing.")
   .example(
     "node $0 radarr sonarr --recent 14",
     "Search radarr and sonarr for all movies/shows added in the last 14 days."

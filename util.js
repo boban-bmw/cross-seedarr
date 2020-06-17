@@ -1,9 +1,9 @@
 const fs = require("fs");
 const path = require("path");
-const logger = require("pino")({
-  prettyPrint: true,
-});
 const { argv } = require("yargs");
+const logger = require("pino")({
+  prettyPrint: !argv.verbose,
+});
 const moment = require("moment");
 
 const { timeout } = require("./config");
