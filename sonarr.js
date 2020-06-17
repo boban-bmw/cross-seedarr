@@ -6,6 +6,7 @@ const {
   deleteEmptyFiles,
   eligibleRelease,
   validIndexers,
+  recentlyAdded,
 } = require("./util");
 const makeClient = require("./client");
 const downloadRelease = require("./download");
@@ -71,7 +72,9 @@ module.exports = async function sonarrFlow() {
 
     const { data: allSeries } = await sonarrApi.get("/series");
 
-    const series = allSeries.filter((series) => series.episodeFileCount > 0);
+    const series = allSeries
+      .filter((series) => series.episodeFileCount > 0)
+      .filter(recentlyAdded);
 
     logger.info(
       `Fetching series complete - Eligible series found: ${series.length}`

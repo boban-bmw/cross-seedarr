@@ -3,8 +3,12 @@ const path = require("path");
 const logger = require("pino")({
   prettyPrint: true,
 });
+const { argv } = require("yargs");
+const moment = require("moment");
 
 const { timeout } = require("./config");
+
+const now = moment();
 
 module.exports = {
   delay() {
@@ -46,5 +50,12 @@ module.exports = {
   },
   validIndexers(ignoredIndexers) {
     return (release) => ignoredIndexers.indexOf(release.indexer) === -1;
+  },
+  recentlyAdded(item) {
+    if (!argv.recent) {
+      return true;
+    }
+
+    return now.diff(moment(item.added), "day") < argv.recent;
   },
 };

@@ -1,7 +1,6 @@
 module.exports = {
   // amount of time to wait between search indexers requests in seconds
   timeout: 5,
-  // if you aren't using radarr, leave the url and apiKey empty
   radarr: {
     // url you use to access radarr
     // https://your.seedbox.url/radarr

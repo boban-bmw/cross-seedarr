@@ -6,6 +6,7 @@ const {
   deleteEmptyFiles,
   eligibleRelease,
   validIndexers,
+  recentlyAdded,
 } = require("./util");
 const makeClient = require("./client");
 const downloadRelease = require("./download");
@@ -55,9 +56,9 @@ module.exports = async function radarrFlow() {
 
     const { data: allMovies } = await radarrApi.get("/movie");
 
-    const movies = allMovies.filter(
-      (movie) => movie.monitored && movie.downloaded && movie.hasFile
-    );
+    const movies = allMovies
+      .filter((movie) => movie.monitored && movie.downloaded && movie.hasFile)
+      .filter(recentlyAdded);
 
     logger.info(
       `Fetching movies complete - Eligible movies found: ${movies.length}`
