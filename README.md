@@ -18,7 +18,7 @@ cp config.example.js config.js
 node index.js radarr sonarr --recent 14
 ```
 
-All flags are optional. The `recent` flag will filter out movies/series added in the last x days.
+`node index.js --help` to see command/argument descriptions.
 
 `torrentDir` will contain all potential matching torrents - pass these to [autotorrent](https://github.com/JohnDoee/autotorrent).
 
