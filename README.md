@@ -21,7 +21,7 @@ Prerequisites: `git` and `node` (I recommend using [nvm](https://github.com/nvm-
 git clone https://github.com/boban-bmw/cross-seedarr.git
 cd cross-seedarr && npm install --production
 cp config.example.js config.js
-# edit config.js to suit your needs
+vim config.js # edit config.js to suit your needs
 ```
 
 ## Usage
@@ -46,9 +46,9 @@ Examples:
                                            14 days.
 ```
 
-`torrentDir` will contain all potential matching torrents - pass these to [autotorrent](https://github.com/JohnDoee/autotorrent).
+`config.torrentDir` will contain all potential matching torrents - pass these to [autotorrent](https://github.com/JohnDoee/autotorrent).
 
-`cross-seedarr` will not download duplicate `.torrent` files - so it recommended to use `autotorrent` without the `-d` flag
+`cross-seedarr` will not download duplicate `.torrent` files - so it is recommended to use `autotorrent` without the `-d` flag
 
 ### Tested versions
 
