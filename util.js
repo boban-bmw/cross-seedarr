@@ -51,11 +51,11 @@ module.exports = {
   validIndexers(ignoredIndexers) {
     return (release) => ignoredIndexers.indexOf(release.indexer) === -1;
   },
-  recentlyAdded(item) {
+  recentlyDownloaded(item) {
     if (!argv.recent) {
       return true;
     }
 
-    return now.diff(moment(item.added), "day") < argv.recent;
+    return now.diff(moment(item.dateAdded), "day") <= argv.recent;
   },
 };

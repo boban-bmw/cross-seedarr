@@ -6,7 +6,7 @@ const {
   deleteEmptyFiles,
   eligibleRelease,
   validIndexers,
-  recentlyAdded,
+  recentlyDownloaded,
 } = require("./util");
 const makeClient = require("./client");
 const downloadRelease = require("./download");
@@ -23,7 +23,7 @@ async function getSeasonReleases(sonarrApi, show, season) {
 
     const searchResults = (
       await sonarrApi.get(
-        `/v3/release?seriesId=${show.id}&seasonNumber=${season.seasonNumber}`
+        `/release?seriesId=${show.id}&seasonNumber=${season.seasonNumber}`
       )
     ).data.filter((result) => result.protocol === "torrent");
 
@@ -65,26 +65,36 @@ module.exports = async function sonarrFlow() {
 
   mkdir(sonarr.torrentDir);
 
-  const sonarrApi = makeClient(sonarr);
+  const sonarrApi = makeClient(sonarr, true);
 
   try {
     logger.info("Fetching series...");
 
     const { data: allSeries } = await sonarrApi.get("/series");
 
-    const series = allSeries
-      .filter((series) => series.episodeFileCount > 0)
-      .filter(recentlyAdded);
-
-    logger.info(
-      `Fetching series complete - Eligible series found: ${series.length}`
+    const series = allSeries.filter(
+      (series) => series.statistics.episodeFileCount > 0
     );
+
+    logger.info("Fetching series complete - processing episodes...");
 
     let counter = 0;
 
     for (const show of series) {
+      const { data: allEpisodeFiles } = await sonarrApi.get(
+        `/episodeFile?seriesId=${show.id}`
+      );
+
       for (const season of show.seasons) {
-        if (season.monitored && season.statistics.episodeFileCount > 0) {
+        const relevantEpisodes = allEpisodeFiles
+          .filter((episode) => episode.seasonNumber === season.seasonNumber)
+          .filter(recentlyDownloaded);
+
+        if (
+          season.monitored &&
+          season.statistics.percentOfEpisodes === 100 &&
+          relevantEpisodes.length > 0
+        ) {
           const releases = await getSeasonReleases(sonarrApi, show, season);
 
           for (const release of releases) {
