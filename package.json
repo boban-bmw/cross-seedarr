@@ -39,7 +39,7 @@
     "*.js": "eslint"
   },
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "moment": "^2.26.0",
     "pino": "^6.3.2",
     "pino-pretty": "^4.0.0",
