@@ -52,7 +52,7 @@ Examples:
 
 ### Tested versions
 
-- `radarr v2` - `v3` might work as well
+- `radarr v3`
 - `sonarr v3`
 - `node v14`
 - `ubuntu v20` - other OS-es should work as well
